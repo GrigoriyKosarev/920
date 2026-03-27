@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_export_bill_wizard" model="ir.actions.act_window">
+        <field name="name">Bill report HU</field>
+        <field name="res_model">bio.export.bill.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'default_move_ids': active_ids}</field>
+    </record>
+
+    <record id="action_export_bill_server" model="ir.actions.server">
+        <field name="name">Bill report HU</field>
+        <field name="model_id" ref="account.model_account_move"/>
+        <field name="binding_model_id" ref="account.model_account_move"/>
+        <field name="binding_view_types">list</field>
+        <field name="state">code</field>
+        <field name="code">
+            action = {
+                'type': 'ir.actions.act_window',
+                'res_model': 'bio.export.bill.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {'default_move_ids': env.context.get('active_ids', [])},
+            }
+        </field>
+    </record>
+
+</odoo>

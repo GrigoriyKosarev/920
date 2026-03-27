@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record model="ir.actions.server" id="action_biosfera_polska_export_xls">
+        <field name="name">Export to XLS (Biosfera Polska sp. z o.o.)</field>
+        <field name="model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_model_id" ref="stock.model_stock_picking"/>
+        <field name="binding_view_types">list,form</field>
+        <field name="state">code</field>
+        <field name="code">
+            if records:
+                action = records.action_biosfera_polska_export_xls()
+        </field>
+        <field name="groups_id" eval="[(4, ref('bio_excel.group_bio_biosfera_polska_export_xls'))]"/>
+    </record>
+</odoo>

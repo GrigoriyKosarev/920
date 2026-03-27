@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="group_bio_biosfera_polska_export_xls" model="res.groups">
+        <field name="name">Export to XLS (Biosfera Polska)</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+</odoo>

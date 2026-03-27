@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_bio_export_bill_wizard,bio.export.bill.wizard,model_bio_export_bill_wizard,,1,1,1,0
+access_pricelist_import_wizard,pricelist.import.wizard,model_pricelist_import_wizard,base.group_user,1,1,1,1
+access_bio_mrp_production_schedule_import_wizard,bio_mrp_production_schedule_import_wizard,model_bio_mrp_production_schedule_import_wizard,base.group_user,1,1,1,1
+access_bio_mrp_production_schedule_lines_import_wizard,bio_mrp_production_schedule_lines_import_wizard,model_bio_mrp_production_schedule_lines_import_wizard,base.group_user,1,1,1,1

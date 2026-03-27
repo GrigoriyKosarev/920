@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Tree view for wizard lines -->
+    <record id="view_bio_mrp_production_schedule_lines_import_wizard_tree" model="ir.ui.view">
+        <field name="name">bio.mrp.production.schedule.lines.import.wizard.tree</field>
+        <field name="model">bio.mrp.production.schedule.lines.import.wizard</field>
+        <field name="arch" type="xml">
+            <tree string="Import Lines"
+                  decoration-success="state=='ready_for_import'"
+                  decoration-danger="state in ('product_not_found', 'bill_not_found')"
+                  decoration-muted="state=='imported'">
+                <field name="default_code"/>
+                <field name="product_id"/>
+                <field name="forecast_date"/>
+                <field name="forecast_qty"/>
+                <field name="state"/>
+                <field name="message"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view for main wizard -->
+    <record id="view_bio_mrp_production_schedule_import_wizard_form" model="ir.ui.view">
+        <field name="name">view_bio_mrp_production_schedule_import_wizard_form</field>
+        <field name="model">bio.mrp.production.schedule.import.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Import from Excel">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="manufacturing_period" widget="radio"/>
+                            <field name="warehouse_id"/>
+                        </group>
+                        <group>
+                            <field name="excel_file" filename="filename"/>
+                            <field name="filename" invisible="1"/>
+                            <field name="company_id"/>
+                            <field name="set_replenish_equal_forecast"
+                                   widget="boolean_toggle"
+                                   help="When importing the forecast plan, the suggested replenishment for raw materials will align with the forecasted plan, ignoring the existing stock."/>
+                        </group>
+                    </group>
+                    <group string="Excel Column Configuration" name="column_config">
+                        <group>
+                            <field name="header_row_number"/>
+                            <field name="default_code_column"/>
+                        </group>
+                        <group>
+                            <field name="first_date_column"/>
+                        </group>
+                    </group>
+
+                    <!-- Invisible field for attrs in footer -->
+                    <field name="line_ids" invisible="1"/>
+                    <group>
+                        <button string="Upload and Parse" type="object" name="action_upload"
+                                class="btn-primary" icon="fa-upload"
+                                help="Parse Excel file and validate products"/>
+                    </group>
+                    <notebook>
+                        <page string="Import Lines" name="lines">
+                            <field name="line_ids" nolabel="1">
+                                <tree decoration-success="state=='ready_for_import'"
+                                      decoration-danger="state in ('product_not_found', 'bill_not_found')"
+                                      decoration-muted="state=='imported'">
+                                    <field name="default_code"/>
+                                    <field name="product_id"/>
+                                    <field name="bom_id"/>
+                                    <field name="forecast_date"/>
+                                    <field name="forecast_qty"/>
+                                    <field name="state" widget="badge"
+                                           decoration-success="state=='ready_for_import'"
+                                           decoration-danger="state in ('product_not_found', 'bill_not_found')"
+                                           decoration-info="state=='imported'"/>
+                                    <field name="message"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <footer>
+                    <button string="Import to MPS" type="object" name="action_import"
+                            class="btn-primary" data-hotkey="q"
+                            attrs="{'invisible': [('line_ids', '=', [])]}"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel" data-hotkey="z"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>
