@@ -221,46 +221,50 @@ class MrpProductionSchedule(models.Model):
 
     @api.model
     def action_set_replenish_equal_forecast(self, ids=None):
-        """Set Suggested Replenishment equal to Forecast Demand for all periods
+        """Set Suggested Replenishment equal to Forecast Demand for all periods.
 
-        This action sets replenish_qty = forecast_qty + indirect_demand_qty for all forecast lines
-        of selected production schedules, ignoring current inventory levels.
-
-        For components with indirect demand, the formula accounts for both:
-        - Direct forecast demand
-        - Indirect demand from parent products in BOM
+        Entry point for JS Action menu. Delegates to _set_replenish_equal_forecast().
 
         Args:
             ids: List of production schedule IDs
         """
-        _logger.info('Suggested=Forecasted action called with IDs: %s', ids)
-
         if not ids:
             raise UserError(_('No production schedules selected.'))
 
-        production_schedule_ids = self.browse(ids)
-
-        if not production_schedule_ids:
+        production_schedules = self.browse(ids)
+        if not production_schedules:
             raise UserError(_('No production schedules found.'))
 
-        # Get computed state with indirect_demand_qty values
+        production_schedules._set_replenish_equal_forecast()
+        self.env.cr.commit()
+        return True
+
+    def _set_replenish_equal_forecast(self):
+        """Set replenish_qty = forecast_qty + indirect_demand_qty for all periods.
+
+        Works on the current recordset. Ignores current inventory levels.
+        For components with indirect demand, distributes it proportionally
+        across forecast lines within each period.
+        """
+        if not self:
+            return
+
+        _logger.info('Suggested=Forecasted called for IDs: %s', self.ids)
+
         try:
-            schedule_states = production_schedule_ids.get_production_schedule_view_state()
+            schedule_states = self.get_production_schedule_view_state()
         except Exception as e:
             raise UserError(_('Failed to compute production schedule state: %s') % str(e))
 
         # Build a mapping of schedule_id -> list of forecast_states
         schedule_forecast_states = {}
         for state in schedule_states:
-            schedule_id = state['id']
-            schedule_forecast_states[schedule_id] = state.get('forecast_ids', [])
+            schedule_forecast_states[state['id']] = state.get('forecast_ids', [])
 
         total_forecasts_updated = 0
 
-        for prod_schedule in production_schedule_ids:
+        for prod_schedule in self:
             forecast_states = schedule_forecast_states.get(prod_schedule.id, [])
-
-            # Get all forecast lines for this production schedule
             forecast_lines = prod_schedule.forecast_ids
 
             if not forecast_lines:
@@ -270,17 +274,13 @@ class MrpProductionSchedule(models.Model):
             # Group forecast lines by period for proportional distribution
             forecasts_by_period = {}
             for forecast in forecast_lines:
-                # Find the period that contains this forecast.date
                 matching_state = None
                 for forecast_state in forecast_states:
                     date_start = forecast_state.get('date_start')
                     date_stop = forecast_state.get('date_stop')
-
-                    # Check if forecast.date falls within this period
-                    if date_start and date_stop:
-                        if date_start <= forecast.date <= date_stop:
-                            matching_state = forecast_state
-                            break
+                    if date_start and date_stop and date_start <= forecast.date <= date_stop:
+                        matching_state = forecast_state
+                        break
 
                 if matching_state:
                     period_key = (matching_state.get('date_start'), matching_state.get('date_stop'))
@@ -294,40 +294,20 @@ class MrpProductionSchedule(models.Model):
             # Update each forecast line with proportionally distributed indirect demand
             for period_key, period_data in forecasts_by_period.items():
                 forecasts = period_data['forecasts']
-                matching_state = period_data['state']
-
-                # Get period totals from the computed state
-                period_indirect_demand_qty = matching_state.get('indirect_demand_qty', 0.0)
-
-                # Calculate total forecast_qty for this period to determine proportions
+                period_indirect_demand_qty = period_data['state'].get('indirect_demand_qty', 0.0)
                 total_period_forecast_qty = sum(f.forecast_qty for f in forecasts)
 
-                _logger.info('Period %s-%s: total_forecast_qty=%.2f, indirect_demand_qty=%.2f, %d forecast(s)',
-                            period_key[0], period_key[1], total_period_forecast_qty,
-                            period_indirect_demand_qty, len(forecasts))
-
                 for forecast in forecasts:
-                    # Distribute indirect_demand proportionally based on forecast_qty
                     if total_period_forecast_qty > 0:
-                        # Proportional distribution
                         proportion = forecast.forecast_qty / total_period_forecast_qty
                         forecast_indirect_demand = period_indirect_demand_qty * proportion
                     else:
-                        # If no forecast_qty, distribute equally
                         forecast_indirect_demand = period_indirect_demand_qty / len(forecasts)
 
-                    # Calculate: replenish = forecast + proportional indirect_demand
                     replenish_qty = forecast.forecast_qty + forecast_indirect_demand
-
-                    _logger.info('  Forecast date=%s: forecast_qty=%.2f, indirect_demand=%.2f (%.1f%%), replenish_qty=%.2f',
-                                forecast.date, forecast.forecast_qty, forecast_indirect_demand,
-                                (proportion * 100 if total_period_forecast_qty > 0 else 100.0/len(forecasts)),
-                                replenish_qty)
-
-                    # Set replenish_qty
                     forecast.write({
                         'replenish_qty': replenish_qty,
-                        'replenish_qty_updated': True,  # Mark as manually updated
+                        'replenish_qty_updated': True,
                     })
                     total_forecasts_updated += 1
 
@@ -346,11 +326,4 @@ class MrpProductionSchedule(models.Model):
                 total_forecasts_updated += 1
 
         _logger.info('Updated %d forecast line(s) for %d production schedule(s)',
-                    total_forecasts_updated, len(production_schedule_ids))
-
-        # Commit changes to database before returning
-        # This ensures changes are persisted before JavaScript reloads the view
-        self.env.cr.commit()
-
-        # Return success (JavaScript will show notification and reload)
-        return True
+                    total_forecasts_updated, len(self))

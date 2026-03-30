@@ -265,109 +265,6 @@ class MrpProductionSheduleImportWizard(models.TransientModel):
 
         return date_columns, lines_to_create
 
-    def _set_replenish_equal_forecast_with_indirect_demand(self, production_schedules):
-        """Set replenish_qty = forecast_qty + indirect_demand_qty for imported schedules
-
-        For raw materials (components), the formula should account for indirect demand:
-        - Normal formula: Suggested = Forecast + Indirect Demand - Stock
-        - With this option: Suggested = Forecast + Indirect Demand (ignoring stock)
-
-        Args:
-            production_schedules: recordset of mrp.production.schedule
-        """
-        if not production_schedules:
-            return
-
-        # Get computed state with indirect_demand_qty values
-        try:
-            schedule_states = production_schedules.get_production_schedule_view_state()
-        except Exception as e:
-            raise UserError(_('Failed to compute production schedule state: %s') % str(e))
-
-        # Build a mapping of schedule_id -> list of forecast_states
-        schedule_forecast_states = {}
-        for state in schedule_states:
-            schedule_id = state['id']
-            schedule_forecast_states[schedule_id] = state.get('forecast_ids', [])
-
-        # Update replenish_qty for each forecast line
-        updated_count = 0
-        for prod_schedule in production_schedules:
-            forecast_states = schedule_forecast_states.get(prod_schedule.id, [])
-
-            # Get all forecast lines for this production schedule
-            forecast_lines = prod_schedule.forecast_ids
-
-            if not forecast_lines:
-                continue
-
-            # Group forecast lines by period for proportional distribution
-            forecasts_by_period = {}
-            for forecast in forecast_lines:
-                # Find the period that contains this forecast.date
-                matching_state = None
-                for forecast_state in forecast_states:
-                    date_start = forecast_state.get('date_start')
-                    date_stop = forecast_state.get('date_stop')
-
-                    # Check if forecast.date falls within this period
-                    if date_start and date_stop:
-                        if date_start <= forecast.date <= date_stop:
-                            matching_state = forecast_state
-                            break
-
-                if matching_state:
-                    period_key = (matching_state.get('date_start'), matching_state.get('date_stop'))
-                    if period_key not in forecasts_by_period:
-                        forecasts_by_period[period_key] = {
-                            'forecasts': [],
-                            'state': matching_state
-                        }
-                    forecasts_by_period[period_key]['forecasts'].append(forecast)
-
-            # Update each forecast line with proportionally distributed indirect demand
-            for period_key, period_data in forecasts_by_period.items():
-                forecasts = period_data['forecasts']
-                matching_state = period_data['state']
-
-                # Get period totals from the computed state
-                period_indirect_demand_qty = matching_state.get('indirect_demand_qty', 0.0)
-
-                # Calculate total forecast_qty for this period to determine proportions
-                total_period_forecast_qty = sum(f.forecast_qty for f in forecasts)
-
-                for forecast in forecasts:
-                    # Distribute indirect_demand proportionally based on forecast_qty
-                    if total_period_forecast_qty > 0:
-                        # Proportional distribution
-                        proportion = forecast.forecast_qty / total_period_forecast_qty
-                        forecast_indirect_demand = period_indirect_demand_qty * proportion
-                    else:
-                        # If no forecast_qty, distribute equally
-                        forecast_indirect_demand = period_indirect_demand_qty / len(forecasts)
-
-                    # Calculate: replenish = forecast + proportional indirect_demand
-                    replenish_qty = forecast.forecast_qty + forecast_indirect_demand
-
-                    forecast.write({
-                        'replenish_qty': replenish_qty,
-                        'replenish_qty_updated': True,
-                    })
-                    updated_count += 1
-
-            # Handle forecasts that didn't match any period (fallback)
-            all_processed = set()
-            for period_data in forecasts_by_period.values():
-                all_processed.update(period_data['forecasts'])
-
-            unmatched_forecasts = set(forecast_lines) - all_processed
-            for forecast in unmatched_forecasts:
-                forecast.write({
-                    'replenish_qty': forecast.forecast_qty,
-                    'replenish_qty_updated': True,
-                })
-                updated_count += 1
-
     def action_import(self):
         """Import validated lines to mrp.production.schedule"""
         self.ensure_one()
@@ -440,7 +337,7 @@ class MrpProductionSheduleImportWizard(models.TransientModel):
 
         # Apply Suggested=Forecasted logic if checkbox is enabled
         if self.set_replenish_equal_forecast and imported_schedules:
-            self._set_replenish_equal_forecast_with_indirect_demand(imported_schedules)
+            imported_schedules._set_replenish_equal_forecast()
 
         # Commit changes to database
         self.env.cr.commit()
