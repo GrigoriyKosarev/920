@@ -3,6 +3,7 @@
 {
     "name": 'Biosphera - MPS',
     "author": 'Biosphera',
+    'category': 'Manufacturing',
     'version': '16.0.1.0.0',
     'description': 'Biosphera. Master Production Schedule extensions',
     'license': 'LGPL-3',
