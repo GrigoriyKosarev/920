@@ -20,6 +20,7 @@ class MrpProductionSchedule(models.Model):
 
     include_child_bom = fields.Boolean(
         string='Include Child Specification',
+        store=False,
         default=True,
         help="If enabled, the system will calculate component demand for all BoM levels.\n"
              "Example: if product A contains component B, and component B contains component C, "
@@ -35,12 +36,10 @@ class MrpProductionSchedule(models.Model):
         (e.g. Finished -> Comp1 -> Comp1.1).
         When disabled, uses standard behavior (first level only).
         """
-        include_child_bom = self.env.context.get('include_child_bom', True)
-
         existing_mps = []
+        include_child_bom = True
         for i, vals in enumerate(vals_list):
-            if vals.get('include_child_bom') is not None:
-                include_child_bom = vals.pop('include_child_bom')
+            include_child_bom = vals.pop('include_child_bom', True)
             if vals.get('bom_id'):
                 mps = self.search([
                     ('product_id', '=', vals['product_id']),
