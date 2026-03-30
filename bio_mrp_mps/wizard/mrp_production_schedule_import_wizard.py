@@ -57,6 +57,13 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
         default=True,
         help='When importing the forecast plan, the suggested replenishment for raw materials '
              'will align with the forecasted plan, ignoring the existing stock.')
+    include_child_bom = fields.Boolean(
+        string='Include Child Specification',
+        default=True,
+        help="If enabled, the system will calculate component demand for all BoM levels.\n"
+             "Example: if product A contains component B, and component B contains component C, "
+             "the system will include both B and C in the planning."
+    )
 
     @api.onchange('manufacturing_period')
     def _onchange_manufacturing_period(self):
