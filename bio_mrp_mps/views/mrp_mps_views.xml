@@ -8,8 +8,7 @@
         <field name="inherit_id" ref="mrp_mps.mrp_mps_production_schedule_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='warehouse_id']" position="after">
-                <field name="include_child_bom"
-                       widget="boolean_toggle"/>
+                <field name="include_child_bom"/>
             </xpath>
         </field>
     </record>
