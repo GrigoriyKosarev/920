@@ -1,5 +1,4 @@
 import base64
-import io
 from datetime import datetime
 from odoo import fields, models, _, api
 from odoo.exceptions import UserError
@@ -64,12 +63,10 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
         """Update column configuration based on manufacturing period"""
         # You can customize these defaults based on your Excel templates
         if self.manufacturing_period == 'month':
-            # For monthly: typically B=code, H onwards=dates
             self.header_row_number = 4
             self.default_code_column = 1
             self.first_date_column = 7
         elif self.manufacturing_period == 'week':
-            # For weekly: C=code, G onwards=dates
             self.header_row_number = 9
             self.default_code_column = 2
             self.first_date_column = 6
