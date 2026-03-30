@@ -20,6 +20,59 @@ class MrpProductionSchedule(models.Model):
     excel_file = fields.Binary('Excel File', readonly=True)
     excel_filename = fields.Char('Filename', readonly=True)
 
+    @api.model_create_multi
+    def create(self, vals_list):
+        # mps = super().create(vals_list)
+
+        existing_mps = []
+        for i, vals in enumerate(vals_list):
+            # Allow to add components of a BoM for MPS already created
+            if vals.get('bom_id'):
+                mps = self.search([
+                    ('product_id', '=', vals['product_id']),
+                    ('warehouse_id', '=', vals.get('warehouse_id', self._default_warehouse_id().id)),
+                    ('company_id', '=', vals.get('company_id', self.env.company.id)),
+                ], limit=1)
+                if mps:
+                    mps.bom_id = vals.get('bom_id')
+                    existing_mps.append((i, mps.id))
+
+        for i_remove, __ in reversed(existing_mps):
+            del vals_list[i_remove]
+
+        mps = super().create(vals_list)
+
+        mps_ids = mps.ids
+        for i, mps_id in existing_mps:
+            mps_ids.insert(i, mps_id)
+        mps = self.browse(mps_ids)
+
+        components_list = set()
+        components_vals = []
+        for record in mps:
+            bom = record.bom_id
+            if not bom:
+                continue
+            dummy, components = bom.explode(record.product_id, 1)
+            for component in components:
+                if component[0].product_id.type != 'consu':
+                    components_list.add((component[0].product_id.id, record.warehouse_id.id, record.company_id.id))
+        for component in components_list:
+            if self.env['mrp.production.schedule'].search([
+                ('product_id', '=', component[0]),
+                ('warehouse_id', '=', component[1]),
+                ('company_id', '=', component[2]),
+            ], limit=1):
+                continue
+            components_vals.append({
+                'product_id': component[0],
+                'warehouse_id': component[1],
+                'company_id': component[2]
+            })
+        if components_vals:
+            self.env['mrp.production.schedule'].create(components_vals)
+        return mps
+
     @api.model
     def action_export_product_demand(self, ids=None):
         """Export Product Demand data to Excel
@@ -307,3 +360,4 @@ class MrpProductionSchedule(models.Model):
 
         _logger.info('Updated %d forecast line(s) for %d production schedule(s)',
                     total_forecasts_updated, len(self))
+
