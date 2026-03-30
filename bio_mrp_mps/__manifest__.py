@@ -12,6 +12,7 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/mrp_mps_views.xml',
         'wizard/mrp_production_schedule_import_wizard_view.xml',
     ],
     'assets': {

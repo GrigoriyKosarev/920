@@ -18,16 +18,29 @@ class MrpProductionSchedule(models.Model):
         help="The maximum replenishment you would like to launch for each period in the MPS. Note that if the demand is higher than that amount, the remaining quantity will be transferred to the next period automatically."
     )
 
+    include_child_bom = fields.Boolean(
+        string='Include Child Specification',
+        default=True,
+        help="If enabled, the system will calculate component demand for all BoM levels.\n"
+             "Example: if product A contains component B, and component B contains component C, "
+             "the system will include both B and C in the planning."
+    )
+
     @api.model_create_multi
     def create(self, vals_list):
-        """Override to create MPS entries for ALL BOM levels, not just first level.
+        """Override to optionally create MPS entries for ALL BOM levels.
 
-        Standard Odoo uses bom.explode() which only recurses into phantom BOMs.
-        This override walks the full BOM tree so that indirect demand is
-        correctly calculated for multi-level BOMs (e.g. Finished -> Comp1 -> Comp1.1).
+        When include_child_bom is enabled, walks the full BOM tree so that
+        indirect demand is correctly calculated for multi-level BOMs
+        (e.g. Finished -> Comp1 -> Comp1.1).
+        When disabled, uses standard behavior (first level only).
         """
+        include_child_bom = self.env.context.get('include_child_bom', True)
+
         existing_mps = []
         for i, vals in enumerate(vals_list):
+            if vals.get('include_child_bom') is not None:
+                include_child_bom = vals.pop('include_child_bom')
             if vals.get('bom_id'):
                 mps = self.search([
                     ('product_id', '=', vals['product_id']),
@@ -48,15 +61,31 @@ class MrpProductionSchedule(models.Model):
             mps_ids.insert(i, mps_id)
         mps = self.browse(mps_ids)
 
-        # Collect components from ALL BOM levels (not just first level)
-        components_set = set()
-        for record in mps:
-            if not record.bom_id:
-                continue
-            self._collect_multilevel_components(
-                record.product_id, record.warehouse_id.id, record.company_id.id,
-                components_set,
-            )
+        if include_child_bom:
+            # Collect components from ALL BOM levels
+            components_set = set()
+            for record in mps:
+                if not record.bom_id:
+                    continue
+                self._collect_multilevel_components(
+                    record.product_id, record.warehouse_id.id, record.company_id.id,
+                    components_set,
+                )
+        else:
+            # Standard behavior: first level only via bom.explode()
+            components_set = set()
+            for record in mps:
+                bom = record.bom_id
+                if not bom:
+                    continue
+                dummy, components = bom.explode(record.product_id, 1)
+                for component in components:
+                    if component[0].product_id.type != 'consu':
+                        components_set.add((
+                            component[0].product_id.id,
+                            record.warehouse_id.id,
+                            record.company_id.id,
+                        ))
 
         # Create MPS entries for components that don't have one yet
         components_vals = []

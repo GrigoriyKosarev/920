@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- Extend MPS form view to add "Include Child Specification" toggle -->
+    <record id="mrp_mps_production_schedule_form_view_inherit" model="ir.ui.view">
+        <field name="name">mrp.production.schedule.form.inherit.bio_mrp_mps</field>
+        <field name="model">mrp.production.schedule</field>
+        <field name="inherit_id" ref="mrp_mps.mrp_mps_production_schedule_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='bom_id']" position="after">
+                <field name="include_child_bom"
+                       widget="boolean_toggle"
+                       attrs="{'readonly': [('id', '!=', False)]}"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
