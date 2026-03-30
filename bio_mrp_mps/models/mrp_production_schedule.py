@@ -35,12 +35,8 @@ class MrpProductionSchedule(models.Model):
         (e.g. Finished -> Comp1 -> Comp1.1).
         When disabled, uses standard behavior (first level only).
         """
-        include_child_bom = self.env.context.get('include_child_bom', True)
-
         existing_mps = []
         for i, vals in enumerate(vals_list):
-            if vals.get('include_child_bom') is not None:
-                include_child_bom = vals.pop('include_child_bom')
             if vals.get('bom_id'):
                 mps = self.search([
                     ('product_id', '=', vals['product_id']),
@@ -61,24 +57,18 @@ class MrpProductionSchedule(models.Model):
             mps_ids.insert(i, mps_id)
         mps = self.browse(mps_ids)
 
-        if include_child_bom:
-            # Collect components from ALL BOM levels
-            components_set = set()
-            for record in mps:
-                if not record.bom_id:
-                    continue
+        # Collect components per record based on its include_child_bom setting
+        components_set = set()
+        for record in mps:
+            if not record.bom_id:
+                continue
+            if record.include_child_bom:
                 self._collect_multilevel_components(
                     record.product_id, record.warehouse_id.id, record.company_id.id,
                     components_set,
                 )
-        else:
-            # Standard behavior: first level only via bom.explode()
-            components_set = set()
-            for record in mps:
-                bom = record.bom_id
-                if not bom:
-                    continue
-                dummy, components = bom.explode(record.product_id, 1)
+            else:
+                dummy, components = record.bom_id.explode(record.product_id, 1)
                 for component in components:
                     if component[0].product_id.type != 'consu':
                         components_set.add((
