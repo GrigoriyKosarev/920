@@ -39,6 +39,7 @@
                             <field name="set_replenish_equal_forecast"
                                    widget="boolean_toggle"
                                    help="When importing the forecast plan, the suggested replenishment for raw materials will align with the forecasted plan, ignoring the existing stock."/>
+                            <field name="include_child_bom" widget="boolean_toggle"/>
                         </group>
                     </group>
                     <group string="Excel Column Configuration" name="column_config">
