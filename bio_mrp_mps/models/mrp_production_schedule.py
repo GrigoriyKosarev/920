@@ -93,13 +93,6 @@ class MrpProductionSchedule(models.Model):
             'valign': 'vcenter'
         })
 
-        field_label_format = workbook.add_format({
-            'bold': True,
-            'border': 1,
-            'align': 'left',
-            'valign': 'vcenter'
-        })
-
         data_format = workbook.add_format({
             'border': 1,
             'align': 'center',
@@ -118,19 +111,6 @@ class MrpProductionSchedule(models.Model):
             'align': 'center',
             'valign': 'vcenter',
             'num_format': 'dd.mm.yyyy'
-        })
-
-        field_label_format = workbook.add_format({
-            'bold': True,
-            'border': 1,
-            'align': 'left',
-            'valign': 'vcenter'
-        })
-
-        data_format = workbook.add_format({
-            'border': 1,
-            'align': 'center',
-            'valign': 'vcenter'
         })
 
         # Write header row

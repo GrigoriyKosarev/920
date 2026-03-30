@@ -35,7 +35,7 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
         comodel_name='bio.mrp.production.schedule.lines.import.wizard',
         inverse_name='bio_mrp_production_schedule_wizard_id', string='Lines' )
 
-    # Excel column configuration (0-indexed, A=0, B=1, C=2, etc.)
+    # Excel column configuration (1-indexed, A=1, B=2, C=3, etc.)
     header_row_number = fields.Integer(
         string='Header Row Number',
         default=4,
@@ -45,12 +45,12 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
         string='Product Code Column',
         default=1,
         required=True,
-        help='Column number for product default_code (A=0, B=1, C=2, etc.)')
+        help='Column number for product default_code (A=1, B=2, C=3, etc.)')
     first_date_column = fields.Integer(
         string='First Date Column',
         default=7,
         required=True,
-        help='Column number where dates start (A=0, B=1, C=2, etc.)')
+        help='Column number where dates start (A=1, B=2, C=3, etc.)')
 
     # Import options
     set_replenish_equal_forecast = fields.Boolean(
