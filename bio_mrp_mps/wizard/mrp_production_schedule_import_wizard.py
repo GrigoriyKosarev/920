@@ -12,9 +12,9 @@ except ImportError:
     xlrd = None
 
 
-class MrpProductionSheduleImportWizard(models.TransientModel):
+class MrpProductionScheduleImportWizard(models.TransientModel):
     _name = 'bio.mrp.production.schedule.import.wizard'
-    _description = 'MRP Production Shedule Import Wizard'
+    _description = 'MRP Production Schedule Import Wizard'
 
     @api.model
     def _default_warehouse_id(self):
@@ -77,7 +77,7 @@ class MrpProductionSheduleImportWizard(models.TransientModel):
 
     def action_open_wizard(self):
         return {
-            'name': _('Open MRP Production Shedule Import Wizard'),
+            'name': _('Open MRP Production Schedule Import Wizard'),
             'type': 'ir.actions.act_window',
             'view_mode': 'form',
             'res_model': 'bio.mrp.production.schedule.import.wizard',
@@ -358,9 +358,9 @@ class MrpProductionSheduleImportWizard(models.TransientModel):
         }
 
 
-class MrpProductionSheduleLinessImportWizard(models.TransientModel):
+class MrpProductionScheduleLinesImportWizard(models.TransientModel):
     _name = 'bio.mrp.production.schedule.lines.import.wizard'
-    _description = 'MRP Production Shedule Lines Import Wizard'
+    _description = 'MRP Production Schedule Lines Import Wizard'
     _order = 'default_code, forecast_date'
 
     bio_mrp_production_schedule_wizard_id = fields.Many2one(
