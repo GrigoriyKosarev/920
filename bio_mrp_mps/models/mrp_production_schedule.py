@@ -17,16 +17,17 @@ class MrpProductionSchedule(models.Model):
         default=99999,
         help="The maximum replenishment you would like to launch for each period in the MPS. Note that if the demand is higher than that amount, the remaining quantity will be transferred to the next period automatically."
     )
-    excel_file = fields.Binary('Excel File', readonly=True)
-    excel_filename = fields.Char('Filename', readonly=True)
 
     @api.model_create_multi
     def create(self, vals_list):
-        # mps = super().create(vals_list)
+        """Override to create MPS entries for ALL BOM levels, not just first level.
 
+        Standard Odoo uses bom.explode() which only recurses into phantom BOMs.
+        This override walks the full BOM tree so that indirect demand is
+        correctly calculated for multi-level BOMs (e.g. Finished -> Comp1 -> Comp1.1).
+        """
         existing_mps = []
         for i, vals in enumerate(vals_list):
-            # Allow to add components of a BoM for MPS already created
             if vals.get('bom_id'):
                 mps = self.search([
                     ('product_id', '=', vals['product_id']),
@@ -47,31 +48,66 @@ class MrpProductionSchedule(models.Model):
             mps_ids.insert(i, mps_id)
         mps = self.browse(mps_ids)
 
-        components_list = set()
-        components_vals = []
+        # Collect components from ALL BOM levels (not just first level)
+        components_set = set()
         for record in mps:
-            bom = record.bom_id
-            if not bom:
+            if not record.bom_id:
                 continue
-            dummy, components = bom.explode(record.product_id, 1)
-            for component in components:
-                if component[0].product_id.type != 'consu':
-                    components_list.add((component[0].product_id.id, record.warehouse_id.id, record.company_id.id))
-        for component in components_list:
-            if self.env['mrp.production.schedule'].search([
-                ('product_id', '=', component[0]),
-                ('warehouse_id', '=', component[1]),
-                ('company_id', '=', component[2]),
+            self._collect_multilevel_components(
+                record.product_id, record.warehouse_id.id, record.company_id.id,
+                components_set,
+            )
+
+        # Create MPS entries for components that don't have one yet
+        components_vals = []
+        for product_id, warehouse_id, company_id in components_set:
+            if not self.search([
+                ('product_id', '=', product_id),
+                ('warehouse_id', '=', warehouse_id),
+                ('company_id', '=', company_id),
             ], limit=1):
-                continue
-            components_vals.append({
-                'product_id': component[0],
-                'warehouse_id': component[1],
-                'company_id': component[2]
-            })
+                components_vals.append({
+                    'product_id': product_id,
+                    'warehouse_id': warehouse_id,
+                    'company_id': company_id,
+                })
         if components_vals:
             self.env['mrp.production.schedule'].create(components_vals)
+
         return mps
+
+    def _collect_multilevel_components(self, product, warehouse_id, company_id, result, visited=None):
+        """Recursively collect all components from multi-level BOM tree.
+
+        Unlike bom.explode() which only recurses into phantom BOMs,
+        this method walks ALL BOM levels regardless of BOM type.
+
+        Args:
+            product: product.product record
+            warehouse_id: int
+            company_id: int
+            result: set of (product_id, warehouse_id, company_id) tuples to fill
+            visited: set of product ids already visited (cycle protection)
+        """
+        if visited is None:
+            visited = set()
+        if product.id in visited:
+            return
+        visited.add(product.id)
+
+        bom = self.env['mrp.bom']._bom_find(product).get(product)
+        if not bom:
+            return
+
+        for line in bom.bom_line_ids:
+            if line._skip_bom_line(product):
+                continue
+            if line.product_id.type == 'consu':
+                continue
+            result.add((line.product_id.id, warehouse_id, company_id))
+            self._collect_multilevel_components(
+                line.product_id, warehouse_id, company_id, result, visited,
+            )
 
     @api.model
     def action_export_product_demand(self, ids=None):
