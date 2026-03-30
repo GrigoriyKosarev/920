@@ -2,14 +2,13 @@
 <templates id="template" xml:space="preserve">
 
     <!-- Extend MPS Control Panel to add Import from Excel button -->
-    <t t-name="bio_excel.MrpMpsControlPanel.Regular"
+    <t t-name="bio_mrp_mps.MrpMpsControlPanel.Regular"
        t-inherit="mrp_mps.MrpMpsControlPanel.Regular"
        t-inherit-mode="extension"
        owl="1">
 
         <!-- Add Import button after "Add a Product" button -->
         <xpath expr="//button[@t-on-click.stop='_onClickCreate']" position="after">
-            <!--ODOO-892-->
             <button type="button"
                     class="btn btn-secondary o_mps_import_excel"
                     t-on-click.stop="_onClickImportExcel">

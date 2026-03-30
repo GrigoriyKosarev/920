@@ -4,17 +4,13 @@ import { patch } from "@web/core/utils/patch";
 import { _t } from "@web/core/l10n/translation";
 import { MrpMpsControlPanel } from "@mrp_mps/search/mrp_mps_control_panel";
 
-console.log('[bio_excel] Patching MrpMpsControlPanel...');
-
 // Patch the control panel to add Import from Excel handler
-patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
+patch(MrpMpsControlPanel.prototype, 'bio_mrp_mps.MrpMpsControlPanel', {
     /**
      * Handle click on "Import from Excel" button
-     * Similar to _onClickCreate in mrp_mps_control_panel.js
      * @private
      */
     _onClickImportExcel(ev) {
-        // console.log('[bio_excel] Import from Excel clicked');
         this.env.model.action.doAction({
             name: _t('Import from Excel'),
             type: 'ir.actions.act_window',
@@ -27,7 +23,7 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
     },
 
     /**
-     * Add Product Demand export to Action menu items
+     * Add Product Demand export and Suggested=Forecasted to Action menu items
      */
     getActionMenuItems() {
         const items = this._super(...arguments);
@@ -54,10 +50,8 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
         const notification = this.env.services.notification;
 
         try {
-            // Get selected record IDs (similar to downloadExport in original MPS code)
             const selectedIds = Array.from(this.model.selectedRecords);
 
-            // If no records selected, show warning
             if (selectedIds.length === 0) {
                 notification.add(
                     _t('Please select at least one production schedule to export.'),
@@ -66,10 +60,8 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
                 return;
             }
 
-            // Get context from props (similar to onExportData in original MPS code)
             const context = this.props.context || {};
 
-            // Call export method with selected IDs
             const action = await orm.call(
                 'mrp.production.schedule',
                 'action_export_product_demand',
@@ -83,7 +75,6 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
                 await this.env.services.action.doAction(action);
             }
         } catch (error) {
-            // Extract error message from Odoo RPC error
             let errorMessage = _t('Export failed');
 
             if (error.data && error.data.message) {
@@ -101,10 +92,8 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
         const notification = this.env.services.notification;
 
         try {
-            // Get selected record IDs
             const selectedIds = Array.from(this.model.selectedRecords);
 
-            // If no records selected, show warning
             if (selectedIds.length === 0) {
                 notification.add(
                     _t('Please select at least one production schedule.'),
@@ -113,10 +102,8 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
                 return;
             }
 
-            // Get context from props
             const context = this.props.context || {};
 
-            // Call Python method to set replenish = forecast
             await orm.call(
                 'mrp.production.schedule',
                 'action_set_replenish_equal_forecast',
@@ -124,17 +111,14 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
                 { context: context }
             );
 
-            // Show success notification
             notification.add(
                 _t('Suggested Replenishment has been set equal to Forecast Demand for all periods.'),
                 { type: 'success' }
             );
 
-            // Reload the view to show updated values
             await this.env.model.load();
 
         } catch (error) {
-            // Extract error message from Odoo RPC error
             let errorMessage = _t('Operation failed');
 
             if (error.data && error.data.message) {
@@ -147,6 +131,3 @@ patch(MrpMpsControlPanel.prototype, 'bio_excel.MrpMpsControlPanel', {
         }
     }
 });
-
-console.log('[bio_excel] MrpMpsControlPanel patched successfully');
-
