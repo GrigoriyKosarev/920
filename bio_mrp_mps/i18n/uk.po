@@ -1,0 +1,451 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* bio_mrp_mps
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 16.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-31 00:00+0000\n"
+"PO-Revision-Date: 2026-03-31 00:00+0000\n"
+"Last-Translator: \n"
+"Language-Team: Ukrainian\n"
+"Language: uk\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#. module: bio_mrp_mps
+#: model:ir.model,name:bio_mrp_mps.model_mrp_production_schedule
+msgid "Production Schedule"
+msgstr "План виробництва"
+
+#. module: bio_mrp_mps
+#: model:ir.model,name:bio_mrp_mps.model_bio_mrp_production_schedule_import_wizard
+msgid "MRP Production Schedule Import Wizard"
+msgstr "Майстер імпорту плану виробництва"
+
+#. module: bio_mrp_mps
+#: model:ir.model,name:bio_mrp_mps.model_bio_mrp_production_schedule_lines_import_wizard
+msgid "MRP Production Schedule Lines Import Wizard"
+msgstr "Рядки майстра імпорту плану виробництва"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.mrp_mps_production_schedule_form_view_inherit
+msgid "Include Child Specification"
+msgstr "Включити дочірні специфікації"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_mrp_production_schedule__max_to_replenish_qty
+msgid "Maximum to Replenish"
+msgstr "Максимум для поповнення"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_mrp_production_schedule__include_child_bom
+msgid "Include Child Specification"
+msgstr "Включити дочірні специфікації"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_mrp_production_schedule__include_child_bom
+msgid ""
+"If enabled, the system will calculate component demand for all BoM levels.\n"
+"Example: if product A contains component B, and component B contains component C, "
+"the system will include both B and C in the planning."
+msgstr ""
+"Якщо увімкнено, система розраховує потребу по всіх рівнях специфікацій.\n"
+"Наприклад: якщо продукт A містить компонент B, а компонент B містить компонент C, "
+"система врахує у плануванні як B, так і C."
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_mrp_production_schedule__max_to_replenish_qty
+msgid "The maximum replenishment you would like to launch for each period in the MPS. Note that if the demand is higher than that amount, the remaining quantity will be transferred to the next period automatically."
+msgstr "Максимальне поповнення, яке ви хочете запустити для кожного періоду в MPS. Зверніть увагу, що якщо потреба перевищує цю кількість, залишок буде автоматично перенесено на наступний період."
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__manufacturing_period
+msgid "Manufacturing Period"
+msgstr "Виробничий період"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__manufacturing_period
+msgid "Monthly"
+msgstr "Щомісячно"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__manufacturing_period
+msgid "Weekly"
+msgstr "Щотижнево"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__manufacturing_period
+msgid "Default value for the time ranges in Master Production Schedule report."
+msgstr "Значення за замовчуванням для часових діапазонів у звіті Головного плану виробництва."
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__warehouse_id
+msgid "Production Warehouse"
+msgstr "Виробничий склад"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__company_id
+msgid "Company"
+msgstr "Компанія"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__excel_file
+msgid "Excel File"
+msgstr "Файл Excel"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__filename
+msgid "Filename"
+msgstr "Ім'я файлу"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__line_ids
+msgid "Lines"
+msgstr "Рядки"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__header_row_number
+msgid "Header Row Number"
+msgstr "Номер рядка заголовка"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__header_row_number
+msgid "Row number where column headers are located (1 = first row, 2 = second row, etc.)"
+msgstr "Номер рядка, де розташовані заголовки стовпців (1 = перший рядок, 2 = другий рядок тощо)"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__default_code_column
+msgid "Product Code Column"
+msgstr "Стовпець коду продукту"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__default_code_column
+msgid "Column number for product default_code (A=1, B=2, C=3, etc.)"
+msgstr "Номер стовпця для коду продукту (A=1, B=2, C=3 тощо)"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__first_date_column
+msgid "First Date Column"
+msgstr "Стовпець першої дати"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__first_date_column
+msgid "Column number where dates start (A=1, B=2, C=3, etc.)"
+msgstr "Номер стовпця, з якого починаються дати (A=1, B=2, C=3 тощо)"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__set_replenish_equal_forecast
+msgid "Suggested Replenishment = Forecasted Demand"
+msgstr "Рекомендоване поповнення = Прогнозована потреба"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__set_replenish_equal_forecast
+msgid "When importing the forecast plan, the suggested replenishment for raw materials will align with the forecasted plan, ignoring the existing stock."
+msgstr "При імпорті прогнозного плану рекомендоване поповнення сировини буде відповідати прогнозному плану, ігноруючи наявні залишки."
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__include_child_bom
+msgid "Include Child Specification"
+msgstr "Включити дочірні специфікації"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_import_wizard__include_child_bom
+msgid ""
+"If enabled, the system will calculate component demand for all BoM levels.\n"
+"Example: if product A contains component B, and component B contains component C, "
+"the system will include both B and C in the planning."
+msgstr ""
+"Якщо увімкнено, система розраховує потребу по всіх рівнях специфікацій.\n"
+"Наприклад: якщо продукт A містить компонент B, а компонент B містить компонент C, "
+"система врахує у плануванні як B, так і C."
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__bio_mrp_production_schedule_wizard_id
+msgid "Wizard"
+msgstr "Майстер"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__product_id
+msgid "Product"
+msgstr "Продукт"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__product_id
+msgid "Product found by default_code"
+msgstr "Продукт знайдений за кодом"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__default_code
+msgid "Product Code"
+msgstr "Код продукту"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__default_code
+msgid "Product code from Excel file"
+msgstr "Код продукту з файлу Excel"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__forecast_date
+msgid "Forecast Date"
+msgstr "Дата прогнозу"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__forecast_date
+msgid "Date from Excel header (DD.MM.YYYY format)"
+msgstr "Дата із заголовка Excel (формат ДД.ММ.РРРР)"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__forecast_qty
+msgid "Forecast Quantity"
+msgstr "Прогнозована кількість"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__forecast_qty
+msgid "Quantity from Excel cell"
+msgstr "Кількість із комірки Excel"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "Status"
+msgstr "Статус"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "Draft"
+msgstr "Чернетка"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "Product Not Found"
+msgstr "Продукт не знайдено"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "BOM Not Found"
+msgstr "Специфікацію не знайдено"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "Ready For Import"
+msgstr "Готовий до імпорту"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "Imported"
+msgstr "Імпортовано"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,selection:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__state
+msgid "Error"
+msgstr "Помилка"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,field_description:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__message
+msgid "Message"
+msgstr "Повідомлення"
+
+#. module: bio_mrp_mps
+#: model:ir.model.fields,help:bio_mrp_mps.field_bio_mrp_production_schedule_lines_import_wizard__message
+msgid "Status message or error description"
+msgstr "Повідомлення про статус або опис помилки"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/models/mrp_production_schedule.py:0
+#, python-format
+msgid "Please install xlsxwriter python library to use this feature.\nCommand: pip install xlsxwriter"
+msgstr "Будь ласка, встановіть бібліотеку xlsxwriter для використання цієї функції.\nКоманда: pip install xlsxwriter"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/models/mrp_production_schedule.py:0
+#, python-format
+msgid "No production schedules found to export."
+msgstr "Не знайдено планів виробництва для експорту."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/models/mrp_production_schedule.py:0
+#, python-format
+msgid "Failed to compute production schedule state: %s"
+msgstr "Не вдалося розрахувати стан плану виробництва: %s"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/models/mrp_production_schedule.py:0
+#, python-format
+msgid "No data to export. Selected production schedules have no Indirect Demand Forecast values."
+msgstr "Немає даних для експорту. Вибрані плани виробництва не мають значень непрямого попиту."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/models/mrp_production_schedule.py:0
+#, python-format
+msgid "No production schedules selected."
+msgstr "Не вибрано планів виробництва."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/models/mrp_production_schedule.py:0
+#, python-format
+msgid "No production schedules found."
+msgstr "Не знайдено планів виробництва."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Open MRP Production Schedule Import Wizard"
+msgstr "Відкрити майстер імпорту плану виробництва"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Please upload an Excel file."
+msgstr "Будь ласка, завантажте файл Excel."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Python library \"xlrd\" is not installed. Please install it: pip install xlrd"
+msgstr "Бібліотека Python \"xlrd\" не встановлена. Будь ласка, встановіть її: pip install xlrd"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Error reading file: %s"
+msgstr "Помилка читання файлу: %s"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Error parsing Excel file with xlrd: %s"
+msgstr "Помилка обробки файлу Excel бібліотекою xlrd: %s"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Excel file does not have enough rows. Header row %d not found."
+msgstr "У файлі Excel недостатньо рядків. Рядок заголовка %d не знайдено."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "No valid dates found in header row %d starting from column %d. Expected format: DD.MM.YYYY (e.g., 01.12.2025)"
+msgstr "Не знайдено дійсних дат у рядку заголовка %d починаючи зі стовпця %d. Очікуваний формат: ДД.ММ.РРРР (наприклад, 01.12.2025)"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Product and BOM found"
+msgstr "Продукт та специфікацію знайдено"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "BOM not found for product \"%s\" (template has %d BOMs total)"
+msgstr "Специфікацію не знайдено для продукту \"%s\" (шаблон має %d специфікацій)"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Product with code \"%s\" not found in database"
+msgstr "Продукт з кодом \"%s\" не знайдено в базі даних"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "No valid lines to import. Please upload and validate Excel file first."
+msgstr "Немає дійсних рядків для імпорту. Спочатку завантажте та перевірте файл Excel."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Successfully imported:\n- %d production schedule(s)\n- %d forecast line(s)\n\nCheck Master Production Schedule to see results."
+msgstr "Успішно імпортовано:\n- %d план(ів) виробництва\n- %d рядок(ів) прогнозу\n\nПеревірте Головний план виробництва для перегляду результатів."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/wizard/mrp_production_schedule_import_wizard.py:0
+#, python-format
+msgid "Import Successful"
+msgstr "Імпорт завершено успішно"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "Import from Excel"
+msgstr "Імпорт з Excel"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "Excel Column Configuration"
+msgstr "Налаштування стовпців Excel"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "Upload and Parse"
+msgstr "Завантажити та обробити"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "Import Lines"
+msgstr "Рядки імпорту"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "Import to MPS"
+msgstr "Імпорт до MPS"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "Cancel"
+msgstr "Скасувати"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Import from Excel"
+msgstr "Імпорт з Excel"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Product Demand"
+msgstr "Потреба продукту"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Suggested=Forecasted"
+msgstr "Рекомендоване=Прогнозоване"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Please select at least one production schedule to export."
+msgstr "Будь ласка, виберіть принаймні один план виробництва для експорту."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Export failed"
+msgstr "Помилка експорту"
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Please select at least one production schedule."
+msgstr "Будь ласка, виберіть принаймні один план виробництва."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Suggested Replenishment has been set equal to Forecast Demand for all periods."
+msgstr "Рекомендоване поповнення встановлено рівним прогнозованій потребі для всіх періодів."
+
+#. module: bio_mrp_mps
+#: code:bio_mrp_mps/static/src/js/mrp_mps_control_panel_patch.js:0
+#, javascript-format
+msgid "Operation failed"
+msgstr "Помилка операції"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
+msgid "When importing the forecast plan, the suggested replenishment for raw materials will align with the forecasted plan, ignoring the existing stock."
+msgstr "При імпорті прогнозного плану рекомендоване поповнення сировини буде відповідати прогнозному плану, ігноруючи наявні залишки."
