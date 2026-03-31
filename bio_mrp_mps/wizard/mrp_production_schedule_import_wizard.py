@@ -306,6 +306,7 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
                     'bom_id': bom.id,
                     'warehouse_id': self.warehouse_id.id,
                     'company_id': self.warehouse_id.company_id.id,
+                    'include_child_bom': self.include_child_bom,
                 })
 
             # Track all schedules (both new and existing)
