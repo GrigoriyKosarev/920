@@ -342,7 +342,25 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
 
         # Apply Suggested=Forecasted logic if checkbox is enabled
         if self.set_replenish_equal_forecast and imported_schedules:
-            imported_schedules._set_replenish_equal_forecast()
+            # Include component schedules for full cascade propagation
+            # get_impacted_schedule() returns all related schedules (components at all BOM levels)
+            impacted_ids = imported_schedules.get_impacted_schedule()
+            all_schedules = imported_schedules | production_schedule_model.browse(impacted_ids)
+            # Iterate until no new forecast lines are created.
+            # Each pass propagates indirect demand one BOM level deeper:
+            # pass 1: parents → level-1 components
+            # pass 2: level-1 → level-2 components, etc.
+            max_iterations = 10
+            for _i in range(max_iterations):
+                prev_count = self.env['mrp.product.forecast'].search_count([
+                    ('production_schedule_id', 'in', all_schedules.ids),
+                ])
+                all_schedules._set_replenish_equal_forecast()
+                new_count = self.env['mrp.product.forecast'].search_count([
+                    ('production_schedule_id', 'in', all_schedules.ids),
+                ])
+                if new_count == prev_count:
+                    break
 
         # Commit changes to database
         self.env.cr.commit()

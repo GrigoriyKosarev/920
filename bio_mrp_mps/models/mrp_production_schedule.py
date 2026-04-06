@@ -342,6 +342,8 @@ class MrpProductionSchedule(models.Model):
         Works on the current recordset. Ignores current inventory levels.
         For components with indirect demand, distributes it proportionally
         across forecast lines within each period.
+        For components without forecast lines, creates them from indirect demand
+        so that the cascade propagates to deeper BOM levels.
         """
         if not self:
             return
@@ -358,6 +360,7 @@ class MrpProductionSchedule(models.Model):
         for state in schedule_states:
             schedule_forecast_states[state['id']] = state.get('forecast_ids', [])
 
+        forecast_model = self.env['mrp.product.forecast']
         total_forecasts_updated = 0
 
         for prod_schedule in self:
@@ -365,7 +368,19 @@ class MrpProductionSchedule(models.Model):
             forecast_lines = prod_schedule.forecast_ids
 
             if not forecast_lines:
-                _logger.warning('Production schedule %s has no forecast lines', prod_schedule.id)
+                # Component without forecast lines — create them from indirect demand
+                # so that replenish_qty is stored and the cascade continues to deeper levels
+                for forecast_state in forecast_states:
+                    indirect_demand = forecast_state.get('indirect_demand_qty', 0.0)
+                    if indirect_demand > 0:
+                        forecast_model.create({
+                            'production_schedule_id': prod_schedule.id,
+                            'date': forecast_state.get('date_start'),
+                            'forecast_qty': 0.0,
+                            'replenish_qty': indirect_demand,
+                            'replenish_qty_updated': True,
+                        })
+                        total_forecasts_updated += 1
                 continue
 
             # Group forecast lines by period for proportional distribution
