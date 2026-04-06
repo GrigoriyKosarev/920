@@ -356,6 +356,7 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
                     ('production_schedule_id', 'in', all_schedules.ids),
                 ])
                 all_schedules._set_replenish_equal_forecast()
+                all_schedules._set_replenish_equal_forecast()
                 new_count = self.env['mrp.product.forecast'].search_count([
                     ('production_schedule_id', 'in', all_schedules.ids),
                 ])
