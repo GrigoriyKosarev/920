@@ -367,9 +367,20 @@ class MrpProductionSchedule(models.Model):
             forecast_states = schedule_forecast_states.get(prod_schedule.id, [])
             forecast_lines = prod_schedule.forecast_ids
 
+            _logger.info(
+                '  Schedule id=%d [%s] %s: forecast_lines=%d, forecast_states=%d, indirect_demands=%s',
+                prod_schedule.id,
+                prod_schedule.product_id.default_code or '',
+                prod_schedule.product_id.name,
+                len(forecast_lines),
+                len(forecast_states),
+                [('date=%s' % fs.get('date_start'), 'indirect=%.2f' % fs.get('indirect_demand_qty', 0.0), 'replenish=%.2f' % fs.get('replenish_qty', 0.0)) for fs in forecast_states],
+            )
+
             if not forecast_lines:
                 # Component without forecast lines — create them from indirect demand
                 # so that replenish_qty is stored and the cascade continues to deeper levels
+                created_count = 0
                 for forecast_state in forecast_states:
                     indirect_demand = forecast_state.get('indirect_demand_qty', 0.0)
                     if indirect_demand > 0:
@@ -381,6 +392,10 @@ class MrpProductionSchedule(models.Model):
                             'replenish_qty_updated': True,
                         })
                         total_forecasts_updated += 1
+                        created_count += 1
+                _logger.info(
+                    '    -> No forecast lines, created %d from indirect demand', created_count,
+                )
                 continue
 
             # Group forecast lines by period for proportional distribution

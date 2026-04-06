@@ -1,7 +1,10 @@
 import base64
+import logging
 from datetime import datetime
 from odoo import fields, models, _, api
 from odoo.exceptions import UserError
+
+_logger = logging.getLogger(__name__)
 
 # Try to import Excel parsing library
 try:
@@ -342,10 +345,32 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
 
         # Apply Suggested=Forecasted logic if checkbox is enabled
         if self.set_replenish_equal_forecast and imported_schedules:
+            _logger.info(
+                '=== IMPORT CASCADE START === include_child_bom=%s',
+                self.include_child_bom,
+            )
+            _logger.info(
+                'Imported parent schedules (%d): %s',
+                len(imported_schedules),
+                [(s.id, s.product_id.default_code, s.product_id.name, 'bom=%s' % s.bom_id.id) for s in imported_schedules],
+            )
+
             # Include component schedules for full cascade propagation
             # get_impacted_schedule() returns all related schedules (components at all BOM levels)
             impacted_ids = imported_schedules.get_impacted_schedule()
-            all_schedules = imported_schedules | production_schedule_model.browse(impacted_ids)
+            impacted_schedules = production_schedule_model.browse(impacted_ids)
+            _logger.info(
+                'Impacted component schedules (%d): %s',
+                len(impacted_schedules),
+                [(s.id, s.product_id.default_code, s.product_id.name, 'bom=%s' % s.bom_id.id, 'forecasts=%d' % len(s.forecast_ids)) for s in impacted_schedules],
+            )
+
+            all_schedules = imported_schedules | impacted_schedules
+            _logger.info(
+                'Total schedules for cascade (%d): IDs=%s',
+                len(all_schedules), all_schedules.ids,
+            )
+
             # Iterate until no new forecast lines are created.
             # Each pass propagates indirect demand one BOM level deeper:
             # pass 1: parents → level-1 components
@@ -355,12 +380,15 @@ class MrpProductionScheduleImportWizard(models.TransientModel):
                 prev_count = self.env['mrp.product.forecast'].search_count([
                     ('production_schedule_id', 'in', all_schedules.ids),
                 ])
+                _logger.info('=== CASCADE PASS %d === forecast_count_before=%d', _i + 1, prev_count)
                 all_schedules._set_replenish_equal_forecast()
                 all_schedules._set_replenish_equal_forecast()
                 new_count = self.env['mrp.product.forecast'].search_count([
                     ('production_schedule_id', 'in', all_schedules.ids),
                 ])
+                _logger.info('CASCADE PASS %d done: forecast_count_after=%d (created %d new)', _i + 1, new_count, new_count - prev_count)
                 if new_count == prev_count:
+                    _logger.info('=== CASCADE CONVERGED after %d passes ===', _i + 1)
                     break
 
         # Commit changes to database
