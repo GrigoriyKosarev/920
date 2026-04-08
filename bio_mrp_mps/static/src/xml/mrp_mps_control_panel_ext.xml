@@ -9,16 +9,7 @@
 
         <!-- Add Import button after "Add a Product" button -->
         <xpath expr="//button[@t-on-click.stop='_onClickCreate']" position="after">
-            <button type="button"
-                    class="btn btn-secondary o_mps_import_excel"
-                    t-on-click.stop="_onClickImportExcel">
-                <i class="fa fa-upload"/> Import from Excel
-            </button>
-        </xpath>
-
-        <!-- Add Time Range dropdown after GroupMenu (Rows) -->
-        <xpath expr="//GroupMenu" position="after">
-            <Dropdown togglerClass="'btn btn-light'">
+            <Dropdown togglerClass="'btn btn-light d-inline-block'">
                 <t t-set-slot="toggler">
                     <i class="fa fa-calendar me-1"/>
                     <span class="dropdown-toggle o_dropdown_title">Time Range</span>
@@ -42,6 +33,12 @@
                         Daily
                 </DropdownItem>
             </Dropdown>
+
+            <button type="button"
+                    class="btn btn-secondary o_mps_import_excel"
+                    t-on-click.stop="_onClickImportExcel">
+                <i class="fa fa-upload"/> Import from Excel
+            </button>
         </xpath>
     </t>
 
