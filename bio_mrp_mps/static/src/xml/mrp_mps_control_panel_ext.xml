@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <templates id="template" xml:space="preserve">
 
-    <!-- Extend MPS Control Panel to add Import from Excel button -->
+    <!-- Extend MPS Control Panel to add Import from Excel button and Time Range selector -->
     <t t-name="bio_mrp_mps.MrpMpsControlPanel.Regular"
        t-inherit="mrp_mps.MrpMpsControlPanel.Regular"
        t-inherit-mode="extension"
@@ -14,6 +14,34 @@
                     t-on-click.stop="_onClickImportExcel">
                 <i class="fa fa-upload"/> Import from Excel
             </button>
+        </xpath>
+
+        <!-- Add Time Range dropdown after GroupMenu (Rows) -->
+        <xpath expr="//GroupMenu" position="after">
+            <Dropdown togglerClass="'btn btn-light'">
+                <t t-set-slot="toggler">
+                    <i class="fa fa-calendar me-1"/>
+                    <span class="dropdown-toggle o_dropdown_title">Time Range</span>
+                </t>
+                <DropdownItem
+                    class="{ o_menu_item: true, selected: manufacturingPeriod === 'month' }"
+                    parentClosingMode="'none'"
+                    onSelected="() => this._onSetManufacturingPeriod('month')">
+                        Monthly
+                </DropdownItem>
+                <DropdownItem
+                    class="{ o_menu_item: true, selected: manufacturingPeriod === 'week' }"
+                    parentClosingMode="'none'"
+                    onSelected="() => this._onSetManufacturingPeriod('week')">
+                        Weekly
+                </DropdownItem>
+                <DropdownItem
+                    class="{ o_menu_item: true, selected: manufacturingPeriod === 'day' }"
+                    parentClosingMode="'none'"
+                    onSelected="() => this._onSetManufacturingPeriod('day')">
+                        Daily
+                </DropdownItem>
+            </Dropdown>
         </xpath>
     </t>
 
