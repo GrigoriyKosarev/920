@@ -18,7 +18,7 @@ patch(MrpMpsControlPanel.prototype, 'bio_mrp_mps.MrpMpsControlPanel', {
     /**
      * Get current manufacturing period from model data
      */
-    get manufacturingPeriod() {
+    getManufacturingPeriod() {
         return this.env.model.data && this.env.model.data.manufacturing_period || 'month';
     },
 
@@ -28,7 +28,7 @@ patch(MrpMpsControlPanel.prototype, 'bio_mrp_mps.MrpMpsControlPanel', {
      * @param {String} period - 'month', 'week', or 'day'
      */
     _onSetManufacturingPeriod(period) {
-        if (this.manufacturingPeriod !== period) {
+        if (this.getManufacturingPeriod() !== period) {
             this.env.model._saveCompanySettings({ manufacturing_period: period });
         }
     },
