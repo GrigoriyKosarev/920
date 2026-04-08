@@ -2,10 +2,37 @@
 
 import { patch } from "@web/core/utils/patch";
 import { _t } from "@web/core/l10n/translation";
+import { Dropdown } from "@web/core/dropdown/dropdown";
+import { DropdownItem } from "@web/core/dropdown/dropdown_item";
 import { MrpMpsControlPanel } from "@mrp_mps/search/mrp_mps_control_panel";
 
-// Patch the control panel to add Import from Excel handler
+// Register Dropdown components for the template
+MrpMpsControlPanel.components = {
+    ...MrpMpsControlPanel.components,
+    Dropdown,
+    DropdownItem,
+};
+
+// Patch the control panel to add Import from Excel handler and Time Range selector
 patch(MrpMpsControlPanel.prototype, 'bio_mrp_mps.MrpMpsControlPanel', {
+    /**
+     * Get current manufacturing period from model data
+     */
+    get manufacturingPeriod() {
+        return this.env.model.data && this.env.model.data.manufacturing_period || 'month';
+    },
+
+    /**
+     * Change manufacturing period on the company and reload MPS
+     * @private
+     * @param {String} period - 'month', 'week', or 'day'
+     */
+    _onSetManufacturingPeriod(period) {
+        if (this.manufacturingPeriod !== period) {
+            this.env.model._saveCompanySettings({ manufacturing_period: period });
+        }
+    },
+
     /**
      * Handle click on "Import from Excel" button
      * @private

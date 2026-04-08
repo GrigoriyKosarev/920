@@ -449,3 +449,23 @@ msgstr "Помилка операції"
 #: model_terms:ir.ui.view,arch_db:bio_mrp_mps.view_bio_mrp_production_schedule_import_wizard_form
 msgid "When importing the forecast plan, the suggested replenishment for raw materials will align with the forecasted plan, ignoring the existing stock."
 msgstr "При імпорті прогнозного плану рекомендоване поповнення сировини буде відповідати прогнозному плану, ігноруючи наявні залишки."
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.mrp_mps_control_panel_ext
+msgid "Time Range"
+msgstr "Часовий діапазон"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.mrp_mps_control_panel_ext
+msgid "Monthly"
+msgstr "Щомісячно"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.mrp_mps_control_panel_ext
+msgid "Weekly"
+msgstr "Щотижнево"
+
+#. module: bio_mrp_mps
+#: model_terms:ir.ui.view,arch_db:bio_mrp_mps.mrp_mps_control_panel_ext
+msgid "Daily"
+msgstr "Щоденно"
