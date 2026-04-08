@@ -24,19 +24,19 @@
                     <span class="dropdown-toggle o_dropdown_title">Time Range</span>
                 </t>
                 <DropdownItem
-                    class="{ o_menu_item: true, selected: manufacturingPeriod === 'month' }"
+                    class="{ o_menu_item: true, selected: getManufacturingPeriod() === 'month' }"
                     parentClosingMode="'none'"
                     onSelected="() => this._onSetManufacturingPeriod('month')">
                         Monthly
                 </DropdownItem>
                 <DropdownItem
-                    class="{ o_menu_item: true, selected: manufacturingPeriod === 'week' }"
+                    class="{ o_menu_item: true, selected: getManufacturingPeriod() === 'week' }"
                     parentClosingMode="'none'"
                     onSelected="() => this._onSetManufacturingPeriod('week')">
                         Weekly
                 </DropdownItem>
                 <DropdownItem
-                    class="{ o_menu_item: true, selected: manufacturingPeriod === 'day' }"
+                    class="{ o_menu_item: true, selected: getManufacturingPeriod() === 'day' }"
                     parentClosingMode="'none'"
                     onSelected="() => this._onSetManufacturingPeriod('day')">
                         Daily
